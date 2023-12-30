@@ -1,37 +1,26 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {deleteBudgetPost, getBudget, getCategory, postBudget} from './budgetThunks.ts';
+import {Category, GetBudgetDetails} from '../../types';
 import {RootState} from "../../app/store.ts";
-import {deleteBudgetPost, getBudget, postBudget} from './budgetThunks.ts';
-import {GetBudgetDetails} from '../../types';
-// import {ApiDishes, DishesPost, GetDishesDetails} from '../../types';
-// import {deleteOneDish, fetchOneDish, getAllDish, postDish, updateDishParam} from './budgetThunks.ts';
-// import {RootState} from '../../app/store.ts';
 
 interface BudgetState {
   budget: GetBudgetDetails[];
+  categories: Category[],
   actionModal: boolean,
   postLoadingBudget: boolean,
   getLoadingBudgets: boolean,
+  getLoadingCategories: boolean,
   deleteLoadingBudget: boolean,
-  // dishes: GetDishesDetails[],
-  // dishOne: ApiDishes | null,
-  // getAllDish: boolean,
-  // updataLoadingParam: boolean,
-  // fetchOneLoading: boolean,
-  // deleteOneDish: boolean,
 }
 
 const initialState: BudgetState = {
   budget: [],
+  categories: [],
   actionModal: false,
   postLoadingBudget: false,
   getLoadingBudgets: false,
+  getLoadingCategories: false,
   deleteLoadingBudget: false,
-  // dishes: [],
-  // dishOne:  null,
-  // getAllDish: false,
-  // updataLoadingParam: false,
-  // fetchOneLoading: false,
-  // deleteOneDish: false,
 };
 
 export const budgetSlice = createSlice({
@@ -56,7 +45,6 @@ export const budgetSlice = createSlice({
     builder.addCase(postBudget.rejected, (state) => {
       state.postLoadingBudget = false;
     });
-
     builder.addCase(getBudget.pending, (state) => {
       state.getLoadingBudgets = true;
     });
@@ -67,7 +55,16 @@ export const budgetSlice = createSlice({
     builder.addCase(getBudget.rejected, (state) => {
       state.getLoadingBudgets = false;
     });
-
+    builder.addCase(getCategory.pending, (state) => {
+      state.getLoadingCategories = true;
+    });
+    builder.addCase(getCategory.fulfilled, (state, {payload: categories}: PayloadAction<Category[]>) => {
+      state.getLoadingCategories = false;
+      state.categories = categories;
+    });
+    builder.addCase(getCategory.rejected, (state) => {
+      state.getLoadingCategories = false;
+    });
     builder.addCase(deleteBudgetPost.pending, (state) => {
       state.deleteLoadingBudget = true;
     });
@@ -77,40 +74,16 @@ export const budgetSlice = createSlice({
     builder.addCase(deleteBudgetPost.rejected, (state) => {
       state.deleteLoadingBudget = false;
     });
-
-    // builder.addCase(updateDishParam.pending, (state) => {
-    //   state.updataLoadingParam = true;
-    // });
-    // builder.addCase(updateDishParam.fulfilled, (state) => {
-    //   state.updataLoadingParam = false;
-    // });
-    // builder.addCase(updateDishParam.rejected, (state) => {
-    //   state.updataLoadingParam = false;
-    // });
-    // builder.addCase(fetchOneDish.pending, (state) => {
-    //   state.fetchOneLoading = true;
-    // });
-    // builder.addCase(fetchOneDish.fulfilled, (state, {payload: dishOne}: PayloadAction<ApiDishes>) => {
-    //   state.fetchOneLoading = false;
-    //   state.dishOne = dishOne;
-    // });
-    // builder.addCase(fetchOneDish.rejected, (state) => {
-    //   state.fetchOneLoading = false;
-    // });
   }
 });
 
 export const budgetReducers = budgetSlice.reducer;
 export const getBudgets = (state:RootState) => state.budget.budget;
+export const getCategories = (state:RootState) => state.budget.categories;
+export const getFetchingLoadingcategories = (state:RootState) => state.budget.getLoadingCategories;
 export const actionForModal = (state: RootState) => state.budget.actionModal;
 export const getFetchingLoadingBudget = (state:RootState) => state.budget.getLoadingBudgets;
 export const deletePostBudget = (state:RootState) => state.budget.deleteLoadingBudget;
-
-// export const getOneDish = (state:RootState) => state.budget.dishOne;
-// export const fetchLoadingOneDish = (state: RootState) => state.budget.fetchOneLoading;
-// export const loadingOfAllDishes = (state:RootState) => state.budget.getAllDish;
-// export const updatesDishParametrs = (state: RootState) => state.budget.updataLoadingParam;
-
 
 export const {
   startEventForModal,
