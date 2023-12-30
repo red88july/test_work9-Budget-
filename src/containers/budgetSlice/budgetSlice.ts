@@ -1,14 +1,17 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from "../../app/store.ts";
-import {postBudget} from './budgetThunks.ts';
+import {deleteBudgetPost, getBudget, postBudget} from './budgetThunks.ts';
+import {GetBudgetDetails} from '../../types';
 // import {ApiDishes, DishesPost, GetDishesDetails} from '../../types';
 // import {deleteOneDish, fetchOneDish, getAllDish, postDish, updateDishParam} from './budgetThunks.ts';
 // import {RootState} from '../../app/store.ts';
 
 interface BudgetState {
+  budget: GetBudgetDetails[];
   actionModal: boolean,
   postLoadingBudget: boolean,
-  // dish: DishesPost[];
+  getLoadingBudgets: boolean,
+  deleteLoadingBudget: boolean,
   // dishes: GetDishesDetails[],
   // dishOne: ApiDishes | null,
   // getAllDish: boolean,
@@ -18,9 +21,11 @@ interface BudgetState {
 }
 
 const initialState: BudgetState = {
+  budget: [],
   actionModal: false,
   postLoadingBudget: false,
-  // dish: [],
+  getLoadingBudgets: false,
+  deleteLoadingBudget: false,
   // dishes: [],
   // dishOne:  null,
   // getAllDish: false,
@@ -51,25 +56,28 @@ export const budgetSlice = createSlice({
     builder.addCase(postBudget.rejected, (state) => {
       state.postLoadingBudget = false;
     });
-    // builder.addCase(getAllDish.pending, (state) => {
-    //   state.getAllDish = true;
-    // });
-    // builder.addCase(getAllDish.fulfilled, (state, {payload: dishes}: PayloadAction<GetDishesDetails[]>) => {
-    //   state.getAllDish = false;
-    //   state.dishes = dishes;
-    // });
-    // builder.addCase(getAllDish.rejected, (state) => {
-    //   state.getAllDish = false;
-    // });
-    // builder.addCase(deleteOneDish.pending, (state) => {
-    //   state.deleteOneDish = true;
-    // });
-    // builder.addCase(deleteOneDish.fulfilled, (state) => {
-    //   state.deleteOneDish = false;
-    // });
-    // builder.addCase(deleteOneDish.rejected, (state) => {
-    //   state.deleteOneDish = false;
-    // });
+
+    builder.addCase(getBudget.pending, (state) => {
+      state.getLoadingBudgets = true;
+    });
+    builder.addCase(getBudget.fulfilled, (state, {payload: budget}: PayloadAction<GetBudgetDetails[]>) => {
+      state.getLoadingBudgets = false;
+      state.budget = budget;
+    });
+    builder.addCase(getBudget.rejected, (state) => {
+      state.getLoadingBudgets = false;
+    });
+
+    builder.addCase(deleteBudgetPost.pending, (state) => {
+      state.deleteLoadingBudget = true;
+    });
+    builder.addCase(deleteBudgetPost.fulfilled, (state) => {
+      state.deleteLoadingBudget = false;
+    });
+    builder.addCase(deleteBudgetPost.rejected, (state) => {
+      state.deleteLoadingBudget = false;
+    });
+
     // builder.addCase(updateDishParam.pending, (state) => {
     //   state.updataLoadingParam = true;
     // });
@@ -93,14 +101,16 @@ export const budgetSlice = createSlice({
 });
 
 export const budgetReducers = budgetSlice.reducer;
+export const getBudgets = (state:RootState) => state.budget.budget;
 export const actionForModal = (state: RootState) => state.budget.actionModal;
-// export const postOneDish = (state:RootState) => state.budget.postDish;
-// export const getAllDishes = (state:RootState) => state.budget.dishes;
+export const getFetchingLoadingBudget = (state:RootState) => state.budget.getLoadingBudgets;
+export const deletePostBudget = (state:RootState) => state.budget.deleteLoadingBudget;
+
 // export const getOneDish = (state:RootState) => state.budget.dishOne;
 // export const fetchLoadingOneDish = (state: RootState) => state.budget.fetchOneLoading;
 // export const loadingOfAllDishes = (state:RootState) => state.budget.getAllDish;
 // export const updatesDishParametrs = (state: RootState) => state.budget.updataLoadingParam;
-// export const deleteFetchingOneDish = (state:RootState) => state.budget.deleteOneDish;
+
 
 export const {
   startEventForModal,

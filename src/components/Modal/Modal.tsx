@@ -4,13 +4,13 @@ import { actionForModal, endEventForModal, startEventForModal } from '../../cont
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import {postBudget} from '../../containers/budgetSlice/budgetThunks.ts';
-import {Amount} from '../../types';
+import {Budget} from '../../types';
 
 const Modal = () => {
   const dispatch = useAppDispatch();
   const actionModal = useAppSelector(actionForModal);
   const navigate = useNavigate();
-  const [amount, setAmount] = useState<Amount>({
+  const [budget, setBudget] = useState<Budget>({
     amount: 0,
   });
 
@@ -43,7 +43,7 @@ const Modal = () => {
         setSelectType(value);
         setSelectCategory('');
       }
-      setAmount((prevState) => ({
+      setBudget((prevState) => ({
         ...prevState,
         [name]: value,
       }));
@@ -56,15 +56,17 @@ const Modal = () => {
       const budgetData = {
         type: selectType,
         category: selectCategory,
-        amount: amount.amount,
+        amount: budget.amount,
       };
       await dispatch(postBudget(budgetData));
     } finally {
-      setAmount((prevState) => ({
+      setBudget((prevState) => ({
         ...prevState,
         amount: 0,
+        date: '',
       }));
     }
+    navigate('/');
   };
 
 
@@ -121,7 +123,7 @@ const Modal = () => {
                     <input
                       id="input-content"
                       name="amount"
-                      value={amount.amount}
+                      value={budget.amount}
                       onChange={(e) => inputChange(e)}
                       className="form-control"
                     />

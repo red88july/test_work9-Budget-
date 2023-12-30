@@ -1,8 +1,6 @@
 import axiosApi from '../../axiosApi.ts';
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {
-  // DishesPost, DishesList, GetDishesDetails, UpdateDish, ApiDishes,
-  Budget} from '../../types';
+import {Budget, BudgetList, GetBudgetDetails} from '../../types';
 
 export const postBudget = createAsyncThunk<void, Budget>(
   'budget/postBudget', async (budget) => {
@@ -10,25 +8,32 @@ export const postBudget = createAsyncThunk<void, Budget>(
   }
 );
 
-// export const getAllDish = createAsyncThunk<GetDishesDetails[]>(
-//   'dishes/getAllDish', async () => {
-//     const response = await axiosApi.get<DishesList | null>('/dishes.json');
-//     const dishes = response.data;
-//
-//     let newDishes: GetDishesDetails[] = [];
-//
-//     if (dishes) {
-//       newDishes = Object.keys(dishes).map(key => {
-//         const dish = dishes[key];
-//         return {
-//           ...dish,
-//           id: key,
-//         };
-//       });
-//     }
-//     return newDishes;
-//   }
-// );
+export const getBudget = createAsyncThunk<GetBudgetDetails[]>(
+  'budget/getBudget', async () => {
+    const response = await axiosApi.get<BudgetList | null>('/budget.json');
+    const budget = response.data;
+
+    let newBudgetArray: GetBudgetDetails[] = [];
+
+    if (budget) {
+      newBudgetArray = Object.keys(budget).map(key => {
+        const budgets = budget[key];
+        return {
+          ...budgets,
+          id: key,
+        };
+      });
+    }
+    return newBudgetArray;
+  }
+);
+
+export const deleteBudgetPost = createAsyncThunk<void, string>(
+  'budget/deleteOnePostBudget',
+  async (id) => {
+    await axiosApi.delete(`/budget/${id}.json`);
+  }
+);
 //
 // export const fetchOneDish = createAsyncThunk<ApiDishes, string>(
 //   'dishes/fetchOneDish',
