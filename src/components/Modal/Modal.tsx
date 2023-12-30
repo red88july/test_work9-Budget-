@@ -109,7 +109,6 @@ const Modal = () => {
                           {category}
                         </option>
                       ))}
-
                     </select>
                   </div>
                 </div>

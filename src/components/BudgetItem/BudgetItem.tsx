@@ -24,10 +24,16 @@ const BudgetItem: React.FC<Props> = ({budget, deletePostBudget, onRemove}) => {
         <span>Amount: <b>{budget.amount}</b> <i>KGS</i></span>
       </div>
       <div className="d-flex gap-2 m-0 flex-wrap">
-        <Link to={`/edit/${budget.id}`} className="btn btn-primary pt-3">Edit</Link>
-        <button type="button" className="btn btn-secondary"
-                onClick={onRemove}
-                disabled={deletePostBudget ? deletePostBudget === budget.id : false}>
+        <Link
+          to={`/edit/${budget.id}`}
+          className="btn btn-primary pt-3">
+          Edit
+        </Link>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={onRemove}
+          disabled={deletePostBudget ? deletePostBudget === budget.id : false}>
           {deletePostBudget && deletePostBudget === budget.id && (<ButtonSpinner/>)}
           Delete
         </button>
