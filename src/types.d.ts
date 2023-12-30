@@ -1,6 +1,4 @@
-export interface Budget {
-  type: string,
-  category: string;
+export interface Amount {
   amount: number,
 }
 
