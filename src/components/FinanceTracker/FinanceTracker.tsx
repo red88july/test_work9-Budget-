@@ -21,7 +21,15 @@ const FinanceTracker = () => {
   };
 
   const resultTotalAmount = () => {
-    return budgetList.reduce((acc, value) => acc + +value.amount, 0);
+    const incomeTotal = budgetList
+      .filter(value => ['salary', 'programming'].includes(value.category.toLowerCase()))
+      .reduce((acc, value) => acc + +value.amount, 0);
+
+    const expenseTotal = budgetList
+      .filter(value => !['salary', 'programming'].includes(value.category.toLowerCase()))
+      .reduce((acc, value) => acc + +value.amount, 0);
+
+    return incomeTotal - expenseTotal;
   };
 
   return (
