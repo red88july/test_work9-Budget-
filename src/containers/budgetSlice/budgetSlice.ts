@@ -1,17 +1,16 @@
-import {createSlice,
-  // PayloadAction
-} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from "../../app/store.ts";
+import {postBudget} from './budgetThunks.ts';
 // import {ApiDishes, DishesPost, GetDishesDetails} from '../../types';
 // import {deleteOneDish, fetchOneDish, getAllDish, postDish, updateDishParam} from './budgetThunks.ts';
 // import {RootState} from '../../app/store.ts';
 
 interface BudgetState {
   actionModal: boolean,
+  postLoadingBudget: boolean,
   // dish: DishesPost[];
   // dishes: GetDishesDetails[],
   // dishOne: ApiDishes | null,
-  // postDish: boolean,
   // getAllDish: boolean,
   // updataLoadingParam: boolean,
   // fetchOneLoading: boolean,
@@ -20,10 +19,10 @@ interface BudgetState {
 
 const initialState: BudgetState = {
   actionModal: false,
+  postLoadingBudget: false,
   // dish: [],
   // dishes: [],
   // dishOne:  null,
-  // postDish: false,
   // getAllDish: false,
   // updataLoadingParam: false,
   // fetchOneLoading: false,
@@ -42,16 +41,16 @@ export const budgetSlice = createSlice({
     },
   },
 
-  // extraReducers: (builder) => {
-    // builder.addCase(postDish.pending, (state) => {
-    //   state.postDish = true;
-    // });
-    // builder.addCase(postDish.fulfilled, (state) => {
-    //   state.postDish = false;
-    // });
-    // builder.addCase(postDish.rejected, (state) => {
-    //   state.postDish = false;
-    // });
+  extraReducers: (builder) => {
+    builder.addCase(postBudget.pending, (state) => {
+      state.postLoadingBudget = true;
+    });
+    builder.addCase(postBudget.fulfilled, (state) => {
+      state.postLoadingBudget = false;
+    });
+    builder.addCase(postBudget.rejected, (state) => {
+      state.postLoadingBudget = false;
+    });
     // builder.addCase(getAllDish.pending, (state) => {
     //   state.getAllDish = true;
     // });
@@ -90,7 +89,7 @@ export const budgetSlice = createSlice({
     // builder.addCase(fetchOneDish.rejected, (state) => {
     //   state.fetchOneLoading = false;
     // });
-  // }
+  }
 });
 
 export const budgetReducers = budgetSlice.reducer;

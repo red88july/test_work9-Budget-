@@ -1,5 +1,7 @@
 export interface Budget {
-  price: number,
+  type: string,
+  category: string;
+  amount: number,
 }
 
 // export interface GetDishesDetails {

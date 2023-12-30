@@ -4,30 +4,22 @@ import { actionForModal, endEventForModal, startEventForModal } from '../../cont
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
 import { Budget } from '../../types';
+import {postBudget} from '../../containers/budgetSlice/budgetThunks.ts';
 
 const Modal = () => {
   const dispatch = useAppDispatch();
   const actionModal = useAppSelector(actionForModal);
   const navigate = useNavigate();
-  const [price, setPrice] = useState<Budget>({
-    price: 0,
+
+  const [budget, setBudget] = useState<Budget>({
+    type: '',
+    category: '',
+    amount: 0,
   });
+
   const [selectCategory, setSelectCategory] = useState<string>('');
   const [selectType, setSelectType] = useState<string>('expense');
   const categories = selectType === 'income' ? ['Drinks', 'Food'] : ['Salary', 'Programming'];
-
-  const inputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = event.target;
-      if (name === 'type') {
-        setSelectType(value);
-        setSelectCategory('');
-      }
-      setPrice((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    },[]);
 
   const onInnerClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -47,6 +39,36 @@ const Modal = () => {
     navigate('/');
   };
 
+  const inputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = event.target;
+      if (name === 'type') {
+        setSelectType(value);
+        setSelectCategory('');
+      }
+      setBudget((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    },[]);
+
+  const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const budgetData = {
+        type: selectType,
+        category: selectCategory,
+        amount: budget.amount,
+      };
+      await dispatch(postBudget(budgetData));
+    } finally {
+      setBudget((prevState) => ({
+        ...prevState,
+        amount: 0,
+      }));
+    }
+  };
+
   return (
     <>
       {actionModal && <Backdrop show={actionModal} onClick={handleOnClickBack} />}
@@ -57,7 +79,7 @@ const Modal = () => {
               <button type="button" className="btn-close" onClick={closeModal} />
             </div>
             <div className="modal-body">
-              <form className="bg-light p-3 border border-4 rounded-3 input-form">
+              <form onSubmit={onFormSubmit} className="bg-light p-3 border border-4 rounded-3 input-form">
                 <div className="mb-2">
                   <div className="form-group mb-3">
                     <label htmlFor="select-type">Type</label>
@@ -99,8 +121,8 @@ const Modal = () => {
                   <div className="d-flex">
                     <input
                       id="input-content"
-                      name="price"
-                      value={price.price}
+                      name="amount"
+                      value={budget.amount}
                       onChange={(e) => inputChange(e)}
                       className="form-control"
                     />
